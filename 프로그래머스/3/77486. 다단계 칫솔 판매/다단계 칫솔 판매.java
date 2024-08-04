@@ -1,34 +1,47 @@
 import java.util.*;
 
 class Solution {
+    
+    class Person {
+        String name;
+        Person parent;
+        int wallet;
+        
+        public Person(String name, Person parent, int wallet) {
+            this.name = name;
+            this.parent = parent;
+            this.wallet = wallet;
+        }
+        
+        public void earn(int money) {
+            this.wallet += (money - money/10);
+            if (parent != null && money/10 > 0) this.parent.earn(money/10);
+        }
+    }
+    
     public int[] solution(String[] enroll, String[] referral, String[] seller, int[] amount) {
         int[] answer = new int[enroll.length];
         
-        Map<String, Integer> sellerIndexMap = new HashMap<>();
-        for (int i = 0; i < enroll.length; i++) {
-            sellerIndexMap.put(enroll[i], i);
+        Map<String, Person> sellerIndexMap = new HashMap<>();
+        for (String p : enroll) {
+            sellerIndexMap.put(p, new Person(p, null, 0));
         }
         
-        Map<Integer, Integer> referMap = new HashMap<>();
         for (int i = 0; i < referral.length; i++) {
-            if (!referral[i].equals("-")) referMap.put(i, sellerIndexMap.get(referral[i]));
+            if (!referral[i].equals("-")) {
+                sellerIndexMap.get(enroll[i]).parent = sellerIndexMap.get(referral[i]);
+            }
         }
         
         
         for (int i = 0; i < seller.length; i++) {
-            int s = sellerIndexMap.get(seller[i]);
-            int a = amount[i]*100;
-            int r = referMap.getOrDefault(s, -1);
-            answer[s] += (a - a/10);
-            while (r != -1) {
-                s = r;
-                r = referMap.getOrDefault(r, -1);
-                if (a == a/10) break;
-                a /= 10;
-                answer[s] += (a - a/10);
-            }
-            
+            sellerIndexMap.get(seller[i]).earn(amount[i]*100);
         }
+        
+        for (int i = 0; i < enroll.length; i++) {
+            answer[i] = sellerIndexMap.get(enroll[i]).wallet;
+        }
+        
         return answer;
     }
 }
