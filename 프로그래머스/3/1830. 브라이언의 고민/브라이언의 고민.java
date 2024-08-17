@@ -1,106 +1,89 @@
-import java.util.*;
+import java.util.ArrayDeque;
 
-public class Solution {
-
+class Solution {
     public String solution(String sentence) {
-        StringBuilder answerList = new StringBuilder();
-        
-        LinkedHashMap<Character, ArrayList<Integer>> lowerCount = new LinkedHashMap<>();
-        String invalid = "invalid";
         try {
-            int size = sentence.length();
+            String answer = "";
 
-            for(int i=0; i<size; i++){
-                char c = sentence.charAt(i);
-
-                if(Character.isLowerCase(c)){
-                    if(!lowerCount.containsKey(c)){
-                        lowerCount.put(c, new ArrayList<Integer>());
-                    }
-                    lowerCount.get(c).add(i);
+            ArrayDeque<Character> input = new ArrayDeque<>();
+            int[] use = new int[26];
+            for (int i = 0; i < sentence.length(); i++) {
+                input.add(sentence.charAt(i));
+                if (sentence.charAt(i) >= 'a' && sentence.charAt(i) <= 'z') {
+                    use[sentence.charAt(i) - 'a']++;
                 }
             }
 
-            int stringIdx = 0;
-            int startChar, endChar;
-            int lastStartChar = -1, lastEndChar = -1;
-            int startWord = 0, endWord = 0;
-            int lastStartWord= -1, lastEndWord = -1;
-            int count, distance;
-            int rule = 0;
+            while (!input.isEmpty()) {
+                char firstInput = input.poll();
+                ArrayDeque<Character> word = new ArrayDeque<>();
 
-            ArrayList<Integer> temp;
-            for(char c : lowerCount.keySet()){
-                temp = lowerCount.get(c);
-                count = temp.size();
-                startChar = temp.get(0);
-                endChar = temp.get(count-1);
-
-                if(count == 1 || count >= 3){
-                    for(int i=1; i<count; i++){
-                        if(temp.get(i) - temp.get(i-1) != 2) return invalid;
-                    }
-                    rule = 1;
-                }
-
-                else if (count == 2){
-                    distance = endChar - startChar;
-
-                    if(distance == 2 && (endChar < lastEndChar && startChar > lastStartChar)){
-                        rule = 1;
-                    }
-                    else if(distance >= 2){
-                        rule = 2;
-                    }
-                    else  return invalid;
-                }
-
-                if(rule == 1){
-                    startWord = startChar -1;
-                    endWord = endChar+1;
-
-                    if(lastStartWord < startWord && lastEndWord > endWord){
-                        
-                        if(startChar - lastStartChar  == 2 && lastEndChar - endChar == 2){
-                            continue;
+                if (firstInput >= 'a' && firstInput <= 'z') { //시작값이 소문자
+                    if (use[firstInput - 'a'] != 2) return "invalid";
+                    if (input.peek() >= 'a' && input.peek() <= 'z') return "invalid";
+                    word.add(input.poll());
+                    char thirdInput = input.poll();
+                    if (thirdInput >= 'a' && thirdInput <= 'z' && thirdInput != firstInput) { //단어 안에 또 소문자가 있는 경우
+                        for (int i = 1; i < use[thirdInput - 'a']; i++) {
+                            if (input.peek() >= 'a' && input.peek() <= 'z') return "invalid";
+                            word.add(input.poll());
+                            if (input.poll() != thirdInput) return "invalid";
                         }
-                        else return invalid;
+                        if (input.peek() >= 'a' && input.peek() <= 'z') return "invalid";
+                        word.add(input.poll());
+                        if (input.poll() != firstInput) return "invalid";
+                    } else if (thirdInput != firstInput) { //앞뒤에만 있는 경우
+                        word.add(thirdInput);
+                        while (input.peek() != firstInput) {
+                            if (input.peek() >= 'a' && input.peek() <= 'z') return "invalid";
+                            word.add(input.poll());
+                        }
+                        input.poll();
+                    }
+                } else { //시작값이 대문자
+                    word.add(firstInput);
+                    if(input.isEmpty()) {
+                        return answer + word.poll();
+                    }
+                    char secondInput = input.poll();
+                    if (secondInput >= 'a' && secondInput <= 'z') {
+                        if(use[secondInput - 'a'] == 2) {
+                            input.addFirst(secondInput);
+                        } else {
+                            for (int i = 1; i < use[secondInput - 'a']; i++) {
+                                if (input.peek() >= 'a' && input.peek() <= 'z') return "invalid";
+                                word.add(input.poll());
+                                if (input.poll() != secondInput) return "invalid";
+                            }
+                            if (input.peek() >= 'a' && input.peek() <= 'z') return "invalid";
+                            word.add(input.poll());
+                        }
+                    } else {
+                        word.add(secondInput);
+                        if(input.isEmpty()) {
+                            return answer + word.poll() + word.poll();
+                        }
+                        while (input.peek() >= 'A' && input.peek() <= 'Z') {
+                            word.add(input.poll());
+                            if(input.isEmpty())
+                                break;
+                        }
+                        if(!input.isEmpty()) {
+                            if (use[input.peek() - 'a'] != 2) {
+                                input.addFirst(word.pollLast());
+                            }
+                        }
                     }
                 }
-
-                else if (rule == 2){
-                    startWord = startChar;
-                    endWord = endChar;
-                    if(lastStartWord < startWord && lastEndWord > endWord) return invalid;
+                while (!word.isEmpty()) {
+                    answer += word.poll();
                 }
-
-                if(lastEndWord >= startWord) return  invalid;
-
-                if(stringIdx < startWord){
-                    answerList.append(makeWord(sentence,stringIdx,startWord-1));
-                    answerList.append(" ");
-                }
-                answerList.append(makeWord(sentence,startWord,endWord));
-                answerList.append(" ");
-                lastStartWord = startWord;
-                lastEndWord = endWord;
-                lastStartChar = startChar;
-                lastEndChar = endChar;
-                stringIdx = endWord+1;
+                if (!input.isEmpty())
+                    answer += " ";
             }
-            
-            if(stringIdx < size){
-                answerList.append(makeWord(sentence,stringIdx,size-1));
-            }
+            return answer;
+        } catch(Exception e) {
+            return "invalid";
         }
-        catch (Exception e){
-            return invalid;
-        }
-        return answerList.toString().trim();
-    }
-
-    public String makeWord(String sentence, int start, int end){
-        String word = sentence.substring(start, end+1);
-        return word.replaceAll("[a-z]","");
     }
 }
