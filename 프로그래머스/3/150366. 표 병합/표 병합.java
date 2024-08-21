@@ -42,17 +42,6 @@ class Solution {
         }
     }
     
-    // public void print(int idx) {
-    //     // if (!locations.containsKey(idx)) {
-    //     //     System.out.println("[]");
-    //     //     return;
-    //     // }
-    //     // for (int[] arr : locations.get(idx)) {
-    //     //     System.out.print(Arrays.toString(arr) + " ");
-    //     // }
-    //     // System.out.println();
-    // }
-    
     public void merge(StringTokenizer st) {
         int r1 = Integer.parseInt(st.nextToken());
         int c1 = Integer.parseInt(st.nextToken());
@@ -135,7 +124,7 @@ class Solution {
     public String[] solution(String[] commands) {
         
         for (String com: commands) {
-            // System.out.println(com); /////////////////////////////////////////
+            
             StringTokenizer st = new StringTokenizer(com);
             String inst = st.nextToken();
             
