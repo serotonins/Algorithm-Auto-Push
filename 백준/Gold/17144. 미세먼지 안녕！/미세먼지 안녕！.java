@@ -16,16 +16,17 @@ public class Main {
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < m; j++) {
                 nextPlus[i][j] += room[i][j];
-                if (room[i][j] < 5) continue;
+                int value = room[i][j] / 5;
+                if (value < 1) continue;
                 int cnt = 0;
                 for (int d = 0; d < 4; d++) {
                     int y = i + dr[0][d];
                     int x = j + dr[1][d];
                     if (isOut(y,x) || room[y][x] == -1) continue;
-                    nextPlus[y][x] += (room[i][j] / 5);
+                    nextPlus[y][x] += value;
                     cnt++;
                 }
-                nextPlus[i][j] -= (room[i][j] / 5) * cnt;
+                nextPlus[i][j] -= value * cnt;
             }
         }
 
