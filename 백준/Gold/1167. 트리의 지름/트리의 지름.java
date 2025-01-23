@@ -4,7 +4,7 @@ import java.io.*;
 public class Main {
     static int n, inf = Integer.MAX_VALUE;
     static int maxiNode, maxiDis;
-    static ArrayList<Way>[] tree;
+    static List<Way>[] tree;
     static boolean[] visit;
 
     static class Way {
@@ -13,7 +13,6 @@ public class Main {
             this.arr = arr;
             this.dis = dis;
         }
-        public String toString() {return arr+"=>"+dis;}
     }
 
     static void dfs(int node, int dis) {
@@ -38,14 +37,11 @@ public class Main {
         n = Integer.parseInt(st.nextToken());
 
         tree = new ArrayList[n+1];
-        for (int i = 1; i < n + 1; i++) {
-            tree[i] = new ArrayList<>();
-        }
-
         for (int i = 0; i < n; i++) {
             st = new StringTokenizer(br.readLine());
             int dep = Integer.parseInt(st.nextToken());
             int arr = Integer.parseInt(st.nextToken());
+            tree[dep] = new ArrayList<>();
             while (arr != -1) {
                 tree[dep].add(new Way(arr, Integer.parseInt(st.nextToken())));
                 arr = Integer.parseInt(st.nextToken());
@@ -57,10 +53,8 @@ public class Main {
         dfs(1, 0);
 
         Arrays.fill(visit, false);
-        int idx = maxiNode;
-        maxiDis = 0;
-        visit[idx] = true;
-        dfs(idx, 0);
+        visit[maxiNode] = true;
+        dfs(maxiNode, 0);
 
         System.out.println(maxiDis);
     }
