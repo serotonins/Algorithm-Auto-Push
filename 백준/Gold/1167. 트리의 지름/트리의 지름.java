@@ -2,9 +2,10 @@ import java.util.*;
 import java.io.*;
 
 public class Main {
-    static int n, m, k, answer, len, inf = Integer.MAX_VALUE;
+    static int n, inf = Integer.MAX_VALUE;
+    static int maxiNode, maxiDis;
     static ArrayList<Way>[] tree;
-    static int[][] dr = {{0,-1,0,1}, {1,0,-1,0}};
+    static boolean[] visit;
 
     static class Way {
         int arr, dis;
@@ -15,9 +16,18 @@ public class Main {
         public String toString() {return arr+"=>"+dis;}
     }
 
-    static boolean isOut(int y, int x) {return y < 0 || y >= n || x < 0 || x >= m;}
+    static void dfs(int node, int dis) {
+        if (dis > maxiDis) {
+            maxiNode = node;
+            maxiDis = dis;
+        }
 
-
+        for (Way way : tree[node]) {
+            if (visit[way.arr]) continue;
+            visit[way.arr] = true;
+            dfs(way.arr, dis+way.dis);
+        }
+    }
 
     public static void main(String[] args) throws IOException {
 
@@ -32,58 +42,27 @@ public class Main {
             tree[i] = new ArrayList<>();
         }
 
-        ArrayDeque<Way> que = new ArrayDeque<>();
-        int tempNode = 0;
         for (int i = 0; i < n; i++) {
             st = new StringTokenizer(br.readLine());
             int dep = Integer.parseInt(st.nextToken());
             int arr = Integer.parseInt(st.nextToken());
             while (arr != -1) {
-                Way init = new Way(arr, Integer.parseInt(st.nextToken()));
-                if (tempNode == 0) {
-                    tempNode = i+1;
-                }
-                tree[dep].add(init);
+                tree[dep].add(new Way(arr, Integer.parseInt(st.nextToken())));
                 arr = Integer.parseInt(st.nextToken());
             }
         }
 
+        visit = new boolean[n+1];
+        visit[1] = true;
+        dfs(1, 0);
 
-        int maxiNode = 0;
-        int maxiDis = 0;
-        boolean[] visit = new boolean[n+1];
-        visit[tempNode] = true;
-        que.add(new Way(tempNode, 0));
-        while (!que.isEmpty()) {
-            Way now = que.poll();
-            for (Way next : tree[now.arr]) {
-                if (visit[next.arr]) continue;
-                visit[next.arr] = true;
-                int disSum = now.dis + next.dis;
-                que.add(new Way(next.arr, disSum));
-                if (disSum > maxiDis) {
-                    maxiDis = disSum;
-                    maxiNode = next.arr;
-                }
-            }
-        }
-
-        que.add(new Way(maxiNode, 0));
         Arrays.fill(visit, false);
-        visit[maxiNode] = true;
-        int answer = 0;
-        while (!que.isEmpty()) {
-            Way now = que.poll();
-            for (Way next : tree[now.arr]) {
-                if (visit[next.arr]) continue;
-                visit[next.arr] = true;
-                int disSum = now.dis + next.dis;
-                que.add(new Way(next.arr, disSum));
-                if (disSum > answer) answer = disSum;
-            }
-        }
+        int idx = maxiNode;
+        maxiDis = 0;
+        visit[idx] = true;
+        dfs(idx, 0);
 
-        System.out.println(answer);
+        System.out.println(maxiDis);
     }
 }
 
