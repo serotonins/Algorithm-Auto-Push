@@ -2,17 +2,11 @@ import java.util.*;
 import java.io.*;
 
 public class Main {
-    static int n, m, k, len, inf = Integer.MAX_VALUE;
     static boolean found;
     static int all;
     static StringBuilder answer = new StringBuilder();
     static int[][] sudoku = new int[9][9];
     static int[] squ = new int[9], ver = new int[9], hor = new int[9];
-
-//    static int[][] dr = {{0,-1,0,1}, {1,0,-1,0}};
-
-
-//    static boolean isOut(int y, int x) {return y < 0 || y >= n || x < 0 || x >= m;}
 
     static boolean isSet(int bit, int idx) {return (bit & (1 << idx)) != 0;}
     static int use(int bit, int idx) {return bit | (1 << idx);}
@@ -56,8 +50,8 @@ public class Main {
 
         int bit = squ[squWV(y,x)] | hor[y] | ver[x];
         if (bit == all) return;
-//        System.out.println(Integer.toBinaryString(bit));
-        for (int i = 1; i <= 9 && !found; i++) {
+
+        for (int i = 1; i <= 9 && (~bit & all) >= (1 << i); i++) {
             if (!isSet(bit, i)) {
                 fix(y,x,i);
                 sudoku[y][x] = i;
@@ -71,10 +65,7 @@ public class Main {
     public static void main(String[] args) throws IOException {
 
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-//        StringTokenizer st = new StringTokenizer(br.readLine());
         StringBuilder sb = new StringBuilder();
-
-//        n = Integer.parseInt(st.nextToken());
 
         for (int i = 0; i < 9; i++) {
             String str = br.readLine();
