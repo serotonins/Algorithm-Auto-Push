@@ -2,7 +2,7 @@ import java.util.*;
 import java.io.*;
 
 public class Main {
-    
+
     static String one, two;
     static int[][] lcs;
 
@@ -30,25 +30,20 @@ public class Main {
             }
         }
 
-        ArrayDeque<Character> stack = new ArrayDeque<>();
         int preY = one.length()-1;
         int preX = two.length()-1;
         int preLen = lcs[preY][preX];
-        while (preLen > 0) {
+        while (preY > 0 && preX > 0) {
             if (lcs[preY-1][preX] == preLen) preY--;
             else if (lcs[preY][preX-1] == preLen) preX--;
             else {
-                stack.push(one.charAt(preY));
+                sb.append(one.charAt(preY));
                 preLen = lcs[--preY][--preX];
             }
         }
 
-        while (!stack.isEmpty()) {
-            sb.append(stack.pop());
-        }
-        
         System.out.println(sb.length());
-        System.out.println(sb.toString());
+        System.out.println(sb.reverse());
     }
 }
 
