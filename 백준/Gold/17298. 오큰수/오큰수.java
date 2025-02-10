@@ -2,7 +2,6 @@ import java.util.*;
 import java.io.*;
 
 public class Main {
-    static int n;
     static StringBuilder sb = new StringBuilder();
 
     static int read() throws IOException {
@@ -14,11 +13,9 @@ public class Main {
     }
 
     public static void main(String[] args) throws IOException {
-
-        n = read();
+        int n = read();
 
         int[] arr = new int[n];
-        int[] stack = new int[n];
         int[] nge = new int[n];
 
         for (int i = 0; i < n; i++) {
@@ -27,20 +24,12 @@ public class Main {
         }
 
         int now = 0;
-        int top = 0;
+        ArrayDeque<Integer> stack = new ArrayDeque<>();
         while (now < n) {
-            if (top == 0) stack[top++] = now;
-            else if (arr[now] > arr[stack[top-1]]) {
-                nge[stack[--top]] = arr[now];
-                while (top > 0) {
-                    if (arr[now] > arr[stack[top-1]]) {
-                        nge[stack[--top]] = arr[now];
-                    } else break;
-                }
-                stack[top++] = now;
-            } else {
-                stack[top++] = now;
+            while (!stack.isEmpty() && arr[now] > arr[stack.peek()]) {
+                nge[stack.pop()] = arr[now];
             }
+            stack.push(now);
             now++;
         }
 
