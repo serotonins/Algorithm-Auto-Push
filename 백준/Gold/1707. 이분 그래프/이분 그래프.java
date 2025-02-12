@@ -2,63 +2,64 @@ import java.util.*;
 import java.io.*;
 
 public class Main {
+    static StringBuilder sb = new StringBuilder();
+
+    static TreeMap<Integer, Set<Integer>> map = new TreeMap<>();
+    static int[] arr;
+
+    static boolean ok = true;
+
+    static void dfs(int now, int group) {
+        int opp = ~group & 3;
+        if (arr[now] == opp || !ok) {
+            ok = false;
+            return;
+        }
+        arr[now] = group;
+        for (int i : map.get(now)) {
+            if (arr[i] == group) {
+                ok = false;
+                return;
+            } else if (arr[i] == 0) dfs(i, opp);
+        }
+    }
+
+    static int read() throws IOException {
+        int c, n = System.in.read() & 15;
+        while ((c = System.in.read()) > 32) {
+            n = (n << 3) + (n << 1) + (c & 15);
+        }
+        return n;
+    }
+
+    static void mapSetting(int one, int two) {
+        if (!map.containsKey(one)) map.put(one, new HashSet<>());
+        if (!map.containsKey(two)) map.put(two, new HashSet<>());
+        map.get(one).add(two);
+        map.get(two).add(one);
+    }
 
     public static void main(String[] args) throws IOException {
 
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-        StringTokenizer st = new StringTokenizer(br.readLine());
-
-        int T = Integer.parseInt(st.nextToken());
+        int T = read();
 
         for (int t = 0; t < T; t++) {
-            st = new StringTokenizer(br.readLine());
-            int v = Integer.parseInt(st.nextToken());
-            int e = Integer.parseInt(st.nextToken());
-
-            boolean ok = true;
-
-            TreeSet<Integer>[] graph = new TreeSet[v+1];
-            for (int i = 0; i < v+1; i++) {
-                graph[i] = new TreeSet<>();
-            }
-
-            int[] visit = new int[v+1];
+            int v = read();
+            int e = read();
+            arr = new int[v+1];
+            map.clear();
+            ok = true;
             for (int i = 0; i < e; i++) {
-                st = new StringTokenizer(br.readLine());
-                int y = Integer.parseInt(st.nextToken());
-                int x = Integer.parseInt(st.nextToken());
-                graph[y].add(x);
-                graph[x].add(y);
+                mapSetting(read(), read());
             }
-
-            for (int i = 1; i < v + 1 && ok; i++) {
-                if (visit[i] != 0) { continue; }
-                ArrayDeque<Integer> que = new ArrayDeque<>();
-                que.add(i);
-                visit[i] = 1;
-
-                while (!que.isEmpty() && ok) {
-                    int now = que.poll();
-                    for (int next : graph[now]) {
-                        if (visit[next] == visit[now]) {
-                            ok = false;
-                            break;
-                        } else if (visit[next] == 0) {
-                            visit[next] = visit[now] * (-1);
-                            que.add(next);
-                        }
-                    }
-                }
+            for (int i = 1; i < v+1 && ok; i++) {
+                if (arr[i] != 0 || !map.containsKey(i)) continue;
+                dfs(i, 1);
             }
-
-            bw.append(ok ? "YES" : "NO");
-            bw.append("\n");
+            sb.append(ok ? "YES\n" : "NO\n");
         }
 
-        bw.flush();
-        bw.close();
-
+        System.out.println(sb.toString());
     }
 }
 
