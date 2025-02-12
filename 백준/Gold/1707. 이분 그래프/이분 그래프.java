@@ -4,7 +4,7 @@ import java.io.*;
 public class Main {
     static StringBuilder sb = new StringBuilder();
 
-    static TreeMap<Integer, Set<Integer>> map = new TreeMap<>();
+    static Map<Integer, List<Integer>> map = new HashMap<>();
     static int[] arr;
 
     static boolean ok = true;
@@ -51,7 +51,7 @@ public class Main {
             arr = new int[v+1];
             map.clear();
             ok = true;
-            for (int i = 1; i <= v; i++) map.put(i, new HashSet<>());
+            for (int i = 1; i <= v; i++) map.put(i, new ArrayList<>());
             for (int i = 0; i < e; i++) mapSetting(read(), read());
 
             for (int i = 1; i < v+1 && ok; i++) {
