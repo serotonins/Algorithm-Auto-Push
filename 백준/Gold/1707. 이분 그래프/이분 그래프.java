@@ -4,7 +4,7 @@ import java.io.*;
 public class Main {
     static StringBuilder sb = new StringBuilder();
 
-    static Map<Integer, List<Integer>> map = new HashMap<>();
+    static List<Integer>[] map;
     static int[] arr;
 
     static boolean ok = true;
@@ -16,7 +16,7 @@ public class Main {
 
         while (!que.isEmpty()) {
             int now = que.poll();
-            for (int i : map.get(now)) {
+            for (int i : map[now]) {
                 if (arr[i] == arr[now]) return false;
                 else if (arr[i] == 0) {
                     arr[i] = (~arr[now]) & 3;
@@ -37,8 +37,8 @@ public class Main {
     }
 
     static void mapSetting(int one, int two) {
-        map.get(one).add(two);
-        map.get(two).add(one);
+        map[one].add(two);
+        map[two].add(one);
     }
 
     public static void main(String[] args) throws IOException {
@@ -49,9 +49,9 @@ public class Main {
             int v = read();
             int e = read();
             arr = new int[v+1];
-            map.clear();
+            map = new ArrayList[v+1];
             ok = true;
-            for (int i = 1; i <= v; i++) map.put(i, new ArrayList<>());
+            for (int i = 1; i <= v; i++) map[i] = new ArrayList<>();
             for (int i = 0; i < e; i++) mapSetting(read(), read());
 
             for (int i = 1; i < v+1 && ok; i++) {
