@@ -9,19 +9,23 @@ public class Main {
 
     static boolean ok = true;
 
-    static void dfs(int now, int group) {
-        int opp = ~group & 3;
-        if (arr[now] == opp || !ok) {
-            ok = false;
-            return;
+    static boolean dfs(int start) {
+        ArrayDeque<Integer> que = new ArrayDeque<>();
+        que.add(start);
+        arr[start] = 1;
+
+        while (!que.isEmpty()) {
+            int now = que.poll();
+            for (int i : map.get(now)) {
+                if (arr[i] == arr[now]) return false;
+                else if (arr[i] == 0) {
+                    arr[i] = (~arr[now]) & 3;
+                    que.add(i);
+                }
+            }
         }
-        arr[now] = group;
-        for (int i : map.get(now)) {
-            if (arr[i] == group) {
-                ok = false;
-                return;
-            } else if (arr[i] == 0) dfs(i, opp);
-        }
+
+        return true;
     }
 
     static int read() throws IOException {
@@ -33,8 +37,6 @@ public class Main {
     }
 
     static void mapSetting(int one, int two) {
-        if (!map.containsKey(one)) map.put(one, new HashSet<>());
-        if (!map.containsKey(two)) map.put(two, new HashSet<>());
         map.get(one).add(two);
         map.get(two).add(one);
     }
@@ -49,12 +51,12 @@ public class Main {
             arr = new int[v+1];
             map.clear();
             ok = true;
-            for (int i = 0; i < e; i++) {
-                mapSetting(read(), read());
-            }
+            for (int i = 1; i <= v; i++) map.put(i, new HashSet<>());
+            for (int i = 0; i < e; i++) mapSetting(read(), read());
+
             for (int i = 1; i < v+1 && ok; i++) {
-                if (arr[i] != 0 || !map.containsKey(i)) continue;
-                dfs(i, 1);
+                if (arr[i] != 0) continue;
+                ok &= dfs(i);
             }
             sb.append(ok ? "YES\n" : "NO\n");
         }
