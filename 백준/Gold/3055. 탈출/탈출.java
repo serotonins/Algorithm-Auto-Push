@@ -2,104 +2,87 @@ import java.util.*;
 import java.io.*;
 
 public class Main {
+    static int n, m, k, len, inf = Integer.MAX_VALUE;
+    static StringBuilder sb = new StringBuilder();
+    static char GROUND = '.', WATER = '*', ROCK = 'X', GOAL = 'D', HEDGEHOG = 'S';
 
-    static int[][] dr = {{0, 1, 0, -1}, {1, 0, -1, 0}};
-    static int r, c;
+    static int[][] dr = {{0,0,-1,1}, {1,-1,0,0}};
+    static char[][] map;
 
-    public static boolean isOut(int y, int x) {
-        return y < 0 || y >= r || x < 0 || x >= c;
-    }
-
-    public static class Hedgehog {
-        int y, x, t;
-        public Hedgehog(int y, int x, int t) {
+    static class WV {
+        int y, x, t = 0;
+        public WV(int y, int x) {
+            this.y = y;
+            this.x = x;
+        }
+        public WV(int y, int x, int t) {
             this.y = y;
             this.x = x;
             this.t = t;
         }
     }
-
+    static boolean isOut(int y, int x) {return y < 0 || y >= n || x < 0 || x >= m;}
+    
     public static void main(String[] args) throws IOException {
 
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-
         StringTokenizer st = new StringTokenizer(br.readLine());
-        r = Integer.parseInt(st.nextToken());
-        c = Integer.parseInt(st.nextToken());
 
-        Map<Character, int[]> animal = new HashMap<>();
+        n = Integer.parseInt(st.nextToken());
+        m = Integer.parseInt(st.nextToken());
 
-        String[] map = new String[r];
-        for (int i = 0; i < r; i++) {
-            map[i] = br.readLine();
-            for (int j = 0; j < c; j++) {
-                if (map[i].charAt(j) == 'S') animal.put('S', new int[] {i, j});
-                else if (map[i].charAt(j) == 'D') animal.put('D', new int[] {i, j});
+        map = new char[n][m];
+        boolean[][] visit = new boolean[n][m];
+        ArrayDeque<WV> que = new ArrayDeque<>();
+        ArrayDeque<WV> waterQue = new ArrayDeque<>();
+        for (int i = 0; i < n; i++) {
+            String str = br.readLine();
+            for (int j = 0; j < m; j++) {
+                map[i][j] = str.charAt(j);
+                if (map[i][j] == HEDGEHOG) {
+                    que.add(new WV(i,j,0));
+                    map[i][j] = '.';
+                    visit[i][j] = true;
+                } else if (map[i][j] == WATER) {
+                    waterQue.add(new WV(i,j));
+                }
             }
         }
 
-        int waterStatus = 0;
-        boolean[][] waterMap = new boolean[r][c];
-        for (int i = 0; i < r; i++) {
-            for (int j = 0; j < c; j++) {
-                if (map[i].charAt(j) == '*') waterMap[i][j] = true;
-            }
-        }
+        int answer = Integer.MAX_VALUE;
 
-        Queue<Hedgehog> que = new ArrayDeque<>();
-        que.add(new Hedgehog(animal.get('S')[0], animal.get('S')[1], 0));
-        boolean[][] visit = new boolean[r][c];
-        visit[animal.get('S')[0]][animal.get('S')[1]] = true;
-
+        int level = -1;
         while (!que.isEmpty()) {
-            Hedgehog dochi = que.poll();
-            if (dochi.y == animal.get('D')[0] && dochi.x == animal.get('D')[1]) {
-                System.out.println(dochi.t);
-                return;
+            WV now = que.poll();
+            if (map[now.y][now.x] == GOAL) {
+                answer = now.t;
+                break;
             }
-
-            boolean[][] nowMap = new boolean[r][c];
-            if (waterStatus != dochi.t + 1)  {
-                for (int i = 0; i < r; i++) System.arraycopy(waterMap[i], 0, nowMap[i], 0, c);
-
-//                System.out.print(waterStatus + " ");
-//                for (int i = 0; i < r; i++) {
-//                    System.out.print(Arrays.toString(waterMap[i]) + ", ");
-//                }
-//                System.out.println();
-
-                for (int i = 0; i < r; i++) {
-                    for (int j = 0; j < c; j++) {
-                        if (waterMap[i][j]) {
-                            for (int k = 0; k < 4; k++) {
-                                int y = i + dr[0][k];
-                                int x = j + dr[1][k];
-                                if (isOut(y,x) || map[y].charAt(x) == 'D' || map[y].charAt(x) == 'X') continue;
-                                nowMap[y][x] = true;
-                            }
-                        }
+            if (level < now.t) {
+                int cnt = waterQue.size();
+                for (int i = 0; i < cnt; i++) {
+                    WV water = waterQue.poll();
+                    for (int d = 0; d < 4; d++) {
+                        int y = water.y + dr[0][d];
+                        int x = water.x + dr[1][d];
+                        if (isOut(y,x) || map[y][x] != GROUND) continue;
+                        waterQue.add(new WV(y,x));
+                        map[y][x] = WATER;
                     }
                 }
-
-                for (int i = 0; i < r; i++) System.arraycopy(nowMap[i], 0, waterMap[i], 0, c);
-                waterStatus = dochi.t + 1;
-//                for (int i = 0; i < r; i++) {
-//                    System.out.print(Arrays.toString(waterMap[i]) + ", ");
-//                }
-//                System.out.println();
+                level++;
             }
-
-            for (int i = 0; i < 4; i++) {
-                int y = dochi.y + dr[0][i];
-                int x = dochi.x + dr[1][i];
-                if (isOut(y,x) || visit[y][x] || map[y].charAt(x) == 'X') continue;
-                if (waterMap[y][x]) continue;
-                que.add(new Hedgehog(y,x,dochi.t+1));
+            for (int d = 0; d < 4; d++) {
+                int y = now.y + dr[0][d];
+                int x = now.x + dr[1][d];
+                if (isOut(y,x) || visit[y][x] || (map[y][x] != GROUND && map[y][x] != GOAL)) continue;
+                que.add(new WV(y,x,now.t+1));
                 visit[y][x] = true;
             }
         }
 
-        System.out.println("KAKTUS");
-        return;
+
+        System.out.println(answer == inf ? "KAKTUS" : answer);
     }
 }
+
