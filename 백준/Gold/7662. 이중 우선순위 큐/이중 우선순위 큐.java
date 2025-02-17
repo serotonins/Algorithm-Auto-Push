@@ -18,15 +18,17 @@ public class Main {
             map.clear();
             for (int i = 0; i < n; i++) {
                 st = new StringTokenizer(br.readLine());
-                if (st.nextToken().charAt(0) == input) {
-                    int num = Integer.parseInt(st.nextToken());
-                    map.put(num, map.getOrDefault(num, 0)+1);
+                char inst = st.nextToken().charAt(0);
+                int num = Integer.parseInt(st.nextToken());
+                if (inst == input) {
+                    map.compute(num, (key, val) -> {
+                        return val == null ? 1 : val+1;
+                    });
                 } else if (map.size() != 0){
-                    int num = Integer.parseInt(st.nextToken());
-                    if (num == -1) num = map.firstKey();
-                    else num = map.lastKey();
-                    if (map.get(num) == 1) map.remove(num);
-                    else map.put(num, map.get(num)-1);
+                    map.compute(num == -1 ? map.firstKey() : map.lastKey(), (key, val) -> {
+                        if (val == null || val <= 1) return null;
+                        return val-1;
+                    });
                 }
             }
             if (map.isEmpty()) sb.append("EMPTY\n");
