@@ -44,7 +44,7 @@ public class Main {
         map = new int[101];
         mapSetting();
 
-        PriorityQueue<Node> que = new PriorityQueue<>((o1, o2) -> o1.cnt - o2.cnt);
+        ArrayDeque<Node> que = new ArrayDeque<>();
         que.add(new Node(1, 0));
 
         while (!que.isEmpty()) {
