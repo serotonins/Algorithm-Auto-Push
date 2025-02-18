@@ -1,69 +1,68 @@
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.util.ArrayDeque;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Queue;
-import java.util.StringTokenizer;
+import java.util.*;
+import java.io.*;
 
 public class Main {
-	static int n, m, result;
-	static int[] visit;
-	static Map<Integer, Integer> map;
-	
-	static class Hi{
-		int num, cnt;
-		public Hi(int num, int cnt) {
-			this.num = num;
-			this.cnt = cnt;
-		}
-	}
-	
-	public static void dfs(int now, int cnt) {
-		if (cnt > result) return;
-		if (now > 100) return;
-		if (now == 100) {
-			if (cnt < result) result = cnt;
-			return;
-		}
-		
-		for (int i = 1; i <= 6; i++) {
-			int next = now + i;
-			if (map.containsKey(now+i)) {
-				next = map.get(now+i);
-			}
-			
-			if (100 < next || visit[next] < cnt + 1) continue;
-			visit[next] = cnt+1;
-			dfs(next, cnt+1);
-		}
-	}
-	
-	public static void main(String[] args) throws IOException {
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		StringTokenizer st;
-		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-		
-		st = new StringTokenizer(br.readLine());
-		n = Integer.parseInt(st.nextToken());
-		m = Integer.parseInt(st.nextToken());
-		result = Integer.MAX_VALUE;
-		visit = new int[101];
-		for (int i = 0; i < 101; i++) {
-			visit[i] = Integer.MAX_VALUE;
-		}
-		map = new HashMap<>();
-		
-		for (int i = 0; i < n+m; i++) {
-			st = new StringTokenizer(br.readLine());
-			map.put(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()));
-		}
-		
-		dfs(1, 0);
-		
-		System.out.println(result);
-	}
+    static int n, m, k, answer, len, inf = Integer.MAX_VALUE;
+    static StringBuilder sb = new StringBuilder();
+
+    static boolean[] visit;
+    static int[] map;
+    static int[][] dr = {{0,0,-1,1}, {1,-1,0,0}};
+    static boolean isOut(int y, int x) {return y < 0 || y >= n || x < 0 || x >= m;}
+
+    static int read() throws IOException {
+        int c, n = System.in.read() & 15;
+        while ((c = System.in.read()) > 32) {
+            n = (n << 3) + (n << 1) + (c & 15);
+        }
+        return n;
+    }
+
+    static void mapSetting() throws IOException {
+        for (int i = 0; i < 101; i++) {
+            map[i] = i;
+        }
+        for (int i = 0; i < n+m; i++) {
+            map[read()] = read();
+        }
+    }
+
+    static class Node {
+        int idx, cnt;
+        public Node(int idx, int cnt) {
+            this.idx = idx;
+            this.cnt = cnt;
+        }
+    }
+
+    public static void main(String[] args) throws IOException {
+
+        n = read();
+        m = read();
+
+        visit = new boolean[101];
+        map = new int[101];
+        mapSetting();
+
+        PriorityQueue<Node> que = new PriorityQueue<>((o1, o2) -> o1.cnt - o2.cnt);
+        que.add(new Node(1, 0));
+
+        while (!que.isEmpty()) {
+            Node now = que.poll();
+            if (now.idx == 100) {
+                answer = now.cnt;
+                break;
+            }
+            for (int i = 1; i <= 6; i++) {
+                if (now.idx+i > 100) break;
+                int next = map[now.idx+i];
+                if (visit[next]) continue;
+                visit[next] = true;
+                que.add(new Node(next, now.cnt+1));
+            }
+        }
+
+        System.out.println(answer);
+    }
 }
+
