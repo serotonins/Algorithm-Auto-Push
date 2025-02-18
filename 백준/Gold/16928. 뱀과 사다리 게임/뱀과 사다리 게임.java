@@ -2,13 +2,10 @@ import java.util.*;
 import java.io.*;
 
 public class Main {
-    static int n, m, k, answer, len, inf = Integer.MAX_VALUE;
-    static StringBuilder sb = new StringBuilder();
+    static int n, m, answer;
 
     static boolean[] visit;
     static int[] map;
-    static int[][] dr = {{0,0,-1,1}, {1,-1,0,0}};
-    static boolean isOut(int y, int x) {return y < 0 || y >= n || x < 0 || x >= m;}
 
     static int read() throws IOException {
         int c, n = System.in.read() & 15;
@@ -44,7 +41,7 @@ public class Main {
         map = new int[101];
         mapSetting();
 
-        ArrayDeque<Node> que = new ArrayDeque<>();
+        Queue<Node> que = new LinkedList<>();
         que.add(new Node(1, 0));
 
         while (!que.isEmpty()) {
