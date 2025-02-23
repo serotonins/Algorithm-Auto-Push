@@ -2,32 +2,13 @@ import java.util.*;
 import java.io.*;
 
 public class Main {
-    static int n;
-
-    static int bin(int now, int start, int[] arr) {
-        int s = start;
-        int e = arr.length-1;
-        int p = (s+e)/2;
-        while (s <= e && e < arr.length) {
-            p = (s+e)/2;
-            long temp = (long) now + arr[p];
-            if (temp < 0) s = p+1;
-            else if (temp > 0) e = p-1;
-            else return p;
-        }
-
-        if (e == start-1) e++;
-        if (s == arr.length) s--;
-        if (Math.abs((long) now + arr[s]) < Math.abs((long) now + arr[e])) return s;
-        return e;
-    }
 
     public static void main(String[] args) throws IOException {
 
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
-
-        n = Integer.parseInt(st.nextToken());
+        
+        int n = Integer.parseInt(st.nextToken());
 
         st = new StringTokenizer(br.readLine());
         int[] arr = new int[n];
@@ -36,18 +17,37 @@ public class Main {
         }
         Arrays.sort(arr);
 
-        long sum = 3_000_000_000L;
+
         int[] answer = new int[3];
-        for (int i = 0; i <= n-3; i++) {
-            for (int j = i+1; j <= n-2; j++) {
-                int p = bin(arr[i]+arr[j], j+1, arr);
-                long temp = Math.abs((long) arr[i]+arr[j]+arr[p]);
-                if (temp < sum) {
-                    sum = temp;
-                    answer[0] = arr[i];
-                    answer[1] = arr[j];
-                    answer[2] = arr[p];
+        if (arr[0] >= 0) {
+            for (int i = 0; i < 3; i++) {
+                answer[i] = arr[i];
+            }
+        } else if (arr[n-1] <= 0) {
+            for (int i = 0; i < 3; i++) {
+                answer[i] = arr[n-3+i];
+            }
+        } else {
+            long sum = 3_000_000_000L;
+            int two, thr;
+            for (int one = 0; one <= n-3; one++) {
+                two = one+1;
+                thr = n-1;
+
+                while (two < thr) {
+                    long temp = (long) arr[one] + arr[two] + arr[thr];
+                    if (sum > Math.abs(temp)) {
+                        sum = Math.abs(temp);
+                        answer[0] = arr[one];
+                        answer[1] = arr[two];
+                        answer[2] = arr[thr];
+                    }
+                    if (temp == 0) break;
+                    else if (temp > 0) thr--;
+                    else two++;
                 }
+
+
             }
         }
 
