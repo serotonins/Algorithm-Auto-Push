@@ -30,15 +30,11 @@ public class Main {
         n = Integer.parseInt(st.nextToken());
 
         st = new StringTokenizer(br.readLine());
-        TreeSet<Integer> set = new TreeSet<>();
-        for (int i = 0; i < n; i++) {
-            set.add(Integer.parseInt(st.nextToken()));
-        }
         int[] arr = new int[n];
-        int idx = 0;
-        for (int i : set) {
-            arr[idx++] = i;
+        for (int i = 0; i < n; i++) {
+            arr[i] = Integer.parseInt(st.nextToken());
         }
+        Arrays.sort(arr);
 
         long sum = 3_000_000_000L;
         int[] answer = new int[3];
