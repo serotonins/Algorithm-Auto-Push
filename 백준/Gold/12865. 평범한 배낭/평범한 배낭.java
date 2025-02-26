@@ -19,16 +19,15 @@ public class Main {
 
         int[] wei = new int[n+1];
         int[] val = new int[n+1];
+        int[][] dp = new int[n+1][k+1];
         for (int i = 1; i <= n; i++) {
             wei[i] = read();
             val[i] = read();
-        }
-
-        int[][] dp = new int[n+1][k+1];
-        for (int j = 1; j <= k; j++) {
-            for (int i = 1; i <= n; i++) {
-                if (j >= wei[i]) dp[i][j] = Math.max(dp[i-1][j], val[i] + dp[i-1][j-wei[i]]);
-                else dp[i][j] = dp[i-1][j];
+            for (int j = 1; j < Math.min(wei[i], k+1); j++) {
+                dp[i][j] = dp[i-1][j];
+            }
+            for (int j = wei[i]; j <= k; j++) {
+                dp[i][j] = Math.max(dp[i-1][j], val[i] + dp[i-1][j-wei[i]]);
             }
         }
 
