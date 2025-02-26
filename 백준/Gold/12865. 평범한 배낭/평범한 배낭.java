@@ -2,36 +2,37 @@ import java.util.*;
 import java.io.*;
 
 public class Main {
+    static int n, k;
+    
+    static int read() throws IOException {
+        int c, n = System.in.read() & 15;
+        while ((c = System.in.read()) > 32) {
+            n = (n << 3) + (n << 1) + (c & 15);
+        }
+        return n;
+    }
 
     public static void main(String[] args) throws IOException {
 
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st = new StringTokenizer(br.readLine());
+        n = read();
+        k = read();
 
-        int n = Integer.parseInt(st.nextToken());
-        int k = Integer.parseInt(st.nextToken());
-
-        int[] weight = new int[n];
-        int[] value = new int[n];
-
-        for (int i = 0; i < n; i++) {
-            st = new StringTokenizer(br.readLine());
-            weight[i] = Integer.parseInt(st.nextToken());
-            value[i] = Integer.parseInt(st.nextToken());
+        int[] wei = new int[n+1];
+        int[] val = new int[n+1];
+        for (int i = 1; i <= n; i++) {
+            wei[i] = read();
+            val[i] = read();
         }
 
-        int[][] dp = new int [n][k+1];
-        for (int i = 0; i < n; i++) {
-            // 현재 탐색하는 물건의 무게만큼을 뺀 열(무게)의 현재 탐색 물건의 전 행(물건 번호)(중복 선택 방지)
-            for (int j = 1; j < k+1; j++) {
-                if (weight[i] <= j) dp[i][j] = value[i];
-                if (j-weight[i] > 0 && i > 0) dp[i][j] += dp[i-1][j-weight[i]];
-                if (i > 0) dp[i][j] = Math.max(dp[i][j], dp[i-1][j]);
+        int[][] dp = new int[n+1][k+1];
+        for (int j = 1; j <= k; j++) {
+            for (int i = 1; i <= n; i++) {
+                if (j >= wei[i]) dp[i][j] = Math.max(dp[i-1][j], val[i] + dp[i-1][j-wei[i]]);
+                else dp[i][j] = dp[i-1][j];
             }
         }
 
-        System.out.println(dp[n-1][k]);
-
+        System.out.println(dp[n][k]);
     }
 }
 
