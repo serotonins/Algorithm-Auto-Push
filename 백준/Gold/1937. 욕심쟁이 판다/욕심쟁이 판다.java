@@ -39,12 +39,16 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
         
-        n = read();
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        
+        n = Integer.parseInt(st.nextToken());
         arr = new int[n+2][n+2];
         visit = new int[n+2][n+2];
         for (int i = 1; i <= n; i++) {
+            st = new StringTokenizer(br.readLine());
             for (int j = 1; j <= n; j++) {
-                arr[i][j] = read();
+                arr[i][j] = Integer.parseInt(st.nextToken());
             }
         }
 
