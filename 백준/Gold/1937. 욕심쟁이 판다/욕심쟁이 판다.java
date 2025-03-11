@@ -49,8 +49,7 @@ public class Main {
 
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
-                back(i, j);
-                answer = Math.max(answer, visit[i][j]);
+                answer = Math.max(answer, back(i, j));
             }
         }
 
