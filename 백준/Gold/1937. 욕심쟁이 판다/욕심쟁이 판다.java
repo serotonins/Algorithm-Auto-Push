@@ -26,14 +26,15 @@ public class Main {
          */
         if (visit[y][x] != 0) return visit[y][x];
 
+        int temp = 0;
         for (int i = 0; i < 4; i++) {
             int w = y + dr[0][i];
             int v = x + dr[1][i];
             if (arr[w][v] <= arr[y][x]) continue;
-            visit[y][x] = Math.max(back(w,v), visit[y][x]);
+            temp = Math.max(back(w,v), temp);
         }
 
-        return ++visit[y][x];
+        return visit[y][x] = temp + 1;
     }
 
     public static void main(String[] args) throws IOException {
