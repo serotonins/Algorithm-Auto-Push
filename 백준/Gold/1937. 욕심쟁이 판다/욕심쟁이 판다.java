@@ -29,7 +29,7 @@ public class Main {
         for (int i = 0; i < 4; i++) {
             int w = y + dr[0][i];
             int v = x + dr[1][i];
-            if (isOut(w,v) || arr[w][v] <= arr[y][x]) continue;
+            if (arr[w][v] <= arr[y][x]) continue;
             visit[y][x] = Math.max(back(w,v), visit[y][x]);
         }
 
@@ -39,16 +39,16 @@ public class Main {
     public static void main(String[] args) throws IOException {
         
         n = read();
-        arr = new int[n][n];
-        visit = new int[n][n];
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
+        arr = new int[n+2][n+2];
+        visit = new int[n+2][n+2];
+        for (int i = 1; i <= n; i++) {
+            for (int j = 1; j <= n; j++) {
                 arr[i][j] = read();
             }
         }
 
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
+        for (int i = 1; i <= n; i++) {
+            for (int j = 1; j <= n; j++) {
                 answer = Math.max(answer, back(i, j));
             }
         }
