@@ -34,7 +34,6 @@ class Solution {
             for (int j = 0; j < ulen; j++) {
                 if (Pattern.matches(banned_id[i], user_id[j])) canChoose[i].add(j);
             }
-            // System.out.println(canChoose[i]);
         }
         
         back(canChoose, 0, 0);
