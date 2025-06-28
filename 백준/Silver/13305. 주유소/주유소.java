@@ -24,10 +24,10 @@ public class Main {
 
 
         int minPrice = Integer.MAX_VALUE;
-        int answer = 0;
+        long answer = 0;
         for (int i = 0; i < n - 1; i++) {
             minPrice = Math.min(minPrice, price[i]);
-            answer += minPrice * distance[i];
+            answer += (long) minPrice * distance[i];
         }
 
         System.out.println(answer);
