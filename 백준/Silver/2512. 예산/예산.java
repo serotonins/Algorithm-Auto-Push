@@ -5,11 +5,19 @@ import java.util.Arrays;
 import java.util.StringTokenizer;
 
 public class Main {
-    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-    static StringBuilder sb = new StringBuilder();
+//    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+//    static StringBuilder sb = new StringBuilder();
 
     static int n;
     static int[] arr;
+
+    static int read() throws IOException {
+        int c, n = System.in.read() & 15;
+        while ((c = System.in.read()) > 32) {
+            n = (n << 3) + (n << 1) + (c & 15);
+        }
+        return n;
+    }
 
     static int binsearch(int target) {
         int s = 0;
@@ -24,13 +32,12 @@ public class Main {
     }
 
     public static void main(String[] args) throws IOException {
-        n = Integer.parseInt(br.readLine());
-        StringTokenizer st = new StringTokenizer(br.readLine());
+        n = read();
         int sum = 0;
         arr = new int[n];
         int[] prefix = new int[n];
         for (int i = 0; i < n; i++) {
-            arr[i] = Integer.parseInt(st.nextToken());
+            arr[i] = read();
         }
         Arrays.sort(arr);
         prefix[0] = arr[0];
@@ -39,7 +46,7 @@ public class Main {
         }
         sum = prefix[n-1];
         int maxi = arr[n - 1];
-        int m = Integer.parseInt(br.readLine());
+        int m = read();
         int answer = -1;
         if (m >= sum) answer = maxi;
         else {
