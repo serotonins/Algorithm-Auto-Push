@@ -18,19 +18,6 @@ public class Main {
         return n;
     }
 
-    static int find(int target) {
-        if (target == 0) return 0;
-        else if (visit[target]) return dp[target];
-
-        for (int v : coins) {
-            if (target < v) break;
-            dp[target] = Math.min(dp[target], find(target - v) + 1);
-        }
-
-        visit[target] = true;
-        return dp[target];
-    }
-
     public static void main(String[] args) throws IOException {
         n = read();
         k = read();
@@ -49,8 +36,12 @@ public class Main {
         coins.addAll(set);
         Collections.sort(coins);
 
-        int answer = find(k);
+        for (int i = 0; i < k + 1; i++) {
+            for (int c : coins) {
+                if (i + c <= k && dp[i] + 1 < dp[i+c]) dp[i+c] = dp[i] + 1; 
+            }
+        }
 
-        System.out.println(answer == inf ? -1 : answer);
+        System.out.println(dp[k] == inf ? -1 : dp[k]);
     }
 }
