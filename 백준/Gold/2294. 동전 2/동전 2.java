@@ -19,11 +19,11 @@ public class Main {
 
     static int find(int target) {
         if (target == 0) return 0;
-        else if (target < 0) return INF;
         else if (visit[target]) return dp[target];
 
         for (Iterator iter = set.iterator(); iter.hasNext(); ) {
             int v = (int) iter.next();
+            if (target < v) break;
             int r = find(target - v);
             if (r == INF) continue;
             dp[target] = Math.min(dp[target], r + 1);
