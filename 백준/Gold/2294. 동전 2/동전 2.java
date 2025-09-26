@@ -4,10 +4,11 @@ import java.io.InputStreamReader;
 import java.util.*;
 
 public class Main {
-    static int n, k, INF = Integer.MAX_VALUE;
+    static int n, k, inf = 10001;
     static int[] dp;
     static boolean[] visit;
-    static TreeSet<Integer> set = new TreeSet<>();
+    static List<Integer> coins = new ArrayList<>();
+    static Set<Integer> set = new HashSet<>();
     static StringBuilder sb = new StringBuilder();
     static int read() throws IOException {
         int c, n = System.in.read() & 15;
@@ -21,12 +22,9 @@ public class Main {
         if (target == 0) return 0;
         else if (visit[target]) return dp[target];
 
-        for (Iterator iter = set.iterator(); iter.hasNext(); ) {
-            int v = (int) iter.next();
+        for (int v : coins) {
             if (target < v) break;
-            int r = find(target - v);
-            if (r == INF) continue;
-            dp[target] = Math.min(dp[target], r + 1);
+            dp[target] = Math.min(dp[target], find(target - v) + 1);
         }
 
         visit[target] = true;
@@ -39,7 +37,7 @@ public class Main {
 
         dp = new int[k+1];
         visit = new boolean[k+1];
-        Arrays.fill(dp, INF);
+        Arrays.fill(dp, inf);
         dp[0] = 0;
         for (int i = 0; i < n; i++) {
             int coin = read();
@@ -48,9 +46,11 @@ public class Main {
             visit[coin] = true;
             dp[coin] = 1;
         }
+        coins.addAll(set);
+        Collections.sort(coins);
 
         int answer = find(k);
 
-        System.out.println(answer == INF ? -1 : answer);
+        System.out.println(answer == inf ? -1 : answer);
     }
 }
