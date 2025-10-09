@@ -73,7 +73,6 @@ class Solution {
         int size = systems.size();
         for (int s = 0; s < size; s++) {
             int system = systems.pop();
-            print(system);
             int temp = base2int(parse(tokens, system), system);
             systems.add(system);
             if (result == -1) {
@@ -85,7 +84,6 @@ class Solution {
         }
         
         context = context.replace("X", result+"");
-        print(context);
         
         return context;
     }
@@ -128,8 +126,6 @@ class Solution {
             cnt--;
         }
         
-        print(systems);
-        
         String[] answer = new String[cnt];
         int idx = 0;
         for (String exp : expressions) {
@@ -138,9 +134,5 @@ class Solution {
         }
         
         return answer;
-    }
-    void print(Object obj) {
-        if (obj.getClass() == String.class) System.out.println((String) obj);
-        else System.out.println(obj.toString());
     }
 }
