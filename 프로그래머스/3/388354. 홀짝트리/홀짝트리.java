@@ -10,42 +10,6 @@ class Solution {
     
     boolean isOdd(int num) {return num % 2 == 1;}
     
-    void start() {
-        for (int root: nodes) {
-            if (!tree.containsKey(root)) { // 단일 노드 트리 처리
-                if (isOdd(root)) reVisit[root] = true;
-                else stVisit[root] = true;
-                continue;
-            }            
-            
-            boolean re = isOdd(root) ^ isOdd(tree.get(root).size());
-            boolean[] visit = re ? reVisit : stVisit;
-            if (visit[parents[root]]) continue;
-            
-            boolean ok = true;
-            for (int child: tree.get(root)) {
-                ok &= move(child, root, re);
-                if (!ok) break;
-            }
-            
-            if (ok) visit[parents[root]] = true;
-        }
-    }
-    boolean move(int num, int parent, boolean re) {
-        boolean meSt = isOdd(num) ^ isOdd(tree.get(num).size());
-        if (meSt ^ re) {
-            boolean ok = true;
-            for (int child: tree.get(num)) {
-                if (child == parent) continue;
-                ok &= move(child, num, re);
-                if (!ok) return false;
-            }
-            return true;
-        } else { // 부모 상태와 다르면
-            return false;
-        }
-    }
-    
     int[] parents;
     
     void union(int y, int x) {
@@ -62,12 +26,11 @@ class Solution {
     public int[] solution(int[] nodes, int[][] edges) {
         Solution.nodes = nodes;
         Arrays.sort(nodes);
+        
         int[] answer = new int[2];
         for (int i : nodes) {maxi = Math.max(maxi, i);}
         parents = new int[maxi+1];
         for (int i = 0; i <= maxi; i++) {parents[i]=i;}
-        stVisit = new boolean[maxi+1];
-        reVisit = new boolean[maxi+1];
         
         for (int[] edge: edges) {
             if (!tree.containsKey(edge[0])) tree.put(edge[0], new ArrayList<>());
@@ -76,19 +39,21 @@ class Solution {
             tree.get(edge[1]).add(edge[0]);
             union(edge[0], edge[1]);
         }
+        for (int i : nodes) {find(i);}
         
-        start();
-        for (int num: nodes) {
-            if (stVisit[parents[num]]) {
-                answer[0]++;
-                stVisit[parents[num]] = false;
-            }
-            if (reVisit[parents[num]]) {
-                answer[1]++;
-                reVisit[parents[num]] = false;
-            }
-            // System.out.println(num + " " + Arrays.toString(answer));
+        Map<Integer, int[]> treeStReMap = new HashMap<>();
+        for (int i : nodes) {
+            if (!tree.containsKey(i)) tree.put(i, new ArrayList<>());
+            int stRe = (isOdd(i) ^ isOdd(tree.get(i).size())) ? 1 : 0;
+            treeStReMap.putIfAbsent(parents[i], new int[2]);
+            treeStReMap.get(parents[i])[stRe]++;
         }
+        
+        for (int i : treeStReMap.keySet()) {
+            if (treeStReMap.get(i)[0] == 1) answer[0]++;
+            if (treeStReMap.get(i)[1] == 1) answer[1]++;
+        }
+        
         return answer;
     }
 }
